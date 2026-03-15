@@ -1673,6 +1673,10 @@ footer.madre-footer{
         <ul>
           <li><a onclick="setTab('czech','cz-gastos')"><span class="ni">📉</span>Ingresar Gastos</a></li>
         </ul>
+        <div class="nav-sec-label">Parcelas</div>
+        <ul>
+          <li><a onclick="setTab('czech','cz-satelital')"><span class="ni">🛰</span>Vista Satelital</a></li>
+        </ul>
         <div class="nav-sec-label">Comunicación</div>
         <ul>
           <li><a onclick="setTab('czech','cz-contacto')"><span class="ni">💬</span>Contacto Lima</a></li>
@@ -2035,6 +2039,69 @@ footer.madre-footer{
         </div>
       </div>
 
+      <!-- CZ-TAB: SATELITAL -->
+      <div id="cz-satelital" class="tab-content">
+        <div class="portal-header"><h1>Vista Satelital de Parcelas</h1></div>
+        <div class="alert-box info" style="margin-bottom:20px;">🛰 Selecciona un proveedor para ver la vista satelital de su zona de producción. Usa el scroll para hacer zoom y arrastra para navegar.</div>
+        <div style="display:grid;grid-template-columns:220px 1fr;gap:20px;">
+
+          <!-- Lista de parcelas -->
+          <div class="panel">
+            <div class="panel-hdr"><span class="panel-title">Seleccionar Parcela</span></div>
+            <div style="display:grid;gap:10px;">
+              <div onclick="loadSatelliteCZ(-10.6626,-75.3558,'PROV-001 · Villa Rica, Pasco')"
+                style="padding:12px;border:1px solid var(--border-d);cursor:pointer;transition:all 0.3s;border-left:3px solid var(--green);"
+                onmouseover="this.style.background='rgba(201,168,76,0.06)'" onmouseout="this.style.background=''">
+                <div style="font-size:12px;color:var(--text-p);font-weight:600;">PROV-001</div>
+                <div style="font-size:10px;color:var(--muted-p);">Coop. Villa Rica · Pasco</div>
+                <div style="font-size:9px;color:var(--gold);margin-top:4px;">Café Geisha · 1,800 msnm</div>
+              </div>
+              <div onclick="loadSatelliteCZ(-11.4893,-74.9011,'PROV-002 · Chanchamayo, Junín')"
+                style="padding:12px;border:1px solid var(--border-d);cursor:pointer;transition:all 0.3s;border-left:3px solid var(--green);"
+                onmouseover="this.style.background='rgba(201,168,76,0.06)'" onmouseout="this.style.background=''">
+                <div style="font-size:12px;color:var(--text-p);font-weight:600;">PROV-002</div>
+                <div style="font-size:10px;color:var(--muted-p);">Fam. Quispe · Chanchamayo, Junín</div>
+                <div style="font-size:9px;color:var(--gold);margin-top:4px;">Café Natural Bourbon</div>
+              </div>
+              <div onclick="loadSatelliteCZ(-9.2853,-75.9964,'PROV-003 · Valle Monzón, Huánuco')"
+                style="padding:12px;border:1px solid var(--border-d);cursor:pointer;transition:all 0.3s;border-left:3px solid var(--amber);"
+                onmouseover="this.style.background='rgba(201,168,76,0.06)'" onmouseout="this.style.background=''">
+                <div style="font-size:12px;color:var(--text-p);font-weight:600;">PROV-003</div>
+                <div style="font-size:10px;color:var(--muted-p);">Agro Monzón · Huánuco</div>
+                <div style="font-size:9px;color:var(--gold);margin-top:4px;">Café Honey · Cacao</div>
+              </div>
+              <div onclick="loadSatelliteCZ(-13.0544,-72.5745,'PROV-004 · Quillabamba, Cusco')"
+                style="padding:12px;border:1px solid var(--border-d);cursor:pointer;transition:all 0.3s;border-left:3px solid var(--blue);"
+                onmouseover="this.style.background='rgba(201,168,76,0.06)'" onmouseout="this.style.background=''">
+                <div style="font-size:12px;color:var(--text-p);font-weight:600;">PROV-004</div>
+                <div style="font-size:10px;color:var(--muted-p);">Com. Shipibo · Quillabamba, Cusco</div>
+                <div style="font-size:9px;color:var(--gold);margin-top:4px;">Cacao Chuncho · Artesanías</div>
+              </div>
+            </div>
+            <!-- Open in Google Maps button -->
+            <div style="margin-top:16px;">
+              <a id="cz-gmaps-link" href="#" target="_blank"
+                style="display:none;width:100%;text-align:center;padding:10px;background:rgba(91,141,239,0.08);border:1px solid rgba(91,141,239,0.3);color:var(--blue);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;text-decoration:none;cursor:pointer;">
+                Abrir en Google Maps ↗
+              </a>
+            </div>
+          </div>
+
+          <!-- Mapa -->
+          <div class="panel" style="padding:0;overflow:hidden;">
+            <div style="padding:14px 20px;border-bottom:1px solid var(--border-d);display:flex;justify-content:space-between;align-items:center;">
+              <span class="panel-title">🛰 Vista Satelital — <span id="cz-sat-name" style="color:var(--gold);">Selecciona una parcela</span></span>
+              <span style="font-size:9px;color:var(--muted-p);">© Google Maps</span>
+            </div>
+            <div id="cz-sat-map" style="height:500px;background:#131008;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;">
+              <span style="font-size:36px;">🛰</span>
+              <span style="font-size:12px;color:rgba(201,168,76,0.6);letter-spacing:0.15em;">Selecciona una parcela</span>
+            </div>
+          </div>
+
+        </div>
+      </div><!-- /cz-satelital -->
+
     </main>
   </div>
 </div><!-- /view-czech -->
@@ -2334,6 +2401,87 @@ function loadSatellite(lat, lng, name) {
   ).openPopup();
 
   satMap.invalidateSize();
+}
+
+// ════════════════════════════════════════
+//  SATELLITE MAP — REPÚBLICA CHECA (instancia separada)
+// ════════════════════════════════════════
+var czSatMap = null;
+var czSatMarker = null;
+
+function loadSatelliteCZ(lat, lng, name) {
+  var nameEl = document.getElementById('cz-sat-name');
+  var linkEl = document.getElementById('cz-gmaps-link');
+  var mapDiv = document.getElementById('cz-sat-map');
+
+  if(nameEl) nameEl.textContent = name;
+
+  if(linkEl){
+    linkEl.href = 'https://www.google.com/maps/@' + lat + ',' + lng + ',500m/data=!3m1!1e3';
+    linkEl.style.display = 'block';
+  }
+
+  if(!czSatMap) {
+    mapDiv.innerHTML = '';
+    mapDiv.style.background = '';
+
+    czSatMap = L.map('cz-sat-map', {
+      center: [lat, lng],
+      zoom: 15,
+      scrollWheelZoom: true,
+      zoomControl: true,
+      maxZoom: 21
+    });
+
+    L.tileLayer(
+      'https://mt{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
+      {
+        attribution: '&copy; Google Maps',
+        subdomains: ['0','1','2','3'],
+        maxZoom: 21,
+        maxNativeZoom: 21,
+        tileSize: 256
+      }
+    ).addTo(czSatMap);
+
+    L.tileLayer(
+      'https://mt{s}.google.com/vt/lyrs=h&x={x}&y={y}&z={z}',
+      {
+        subdomains: ['0','1','2','3'],
+        maxZoom: 21,
+        maxNativeZoom: 21,
+        opacity: 0.8,
+        tileSize: 256
+      }
+    ).addTo(czSatMap);
+
+    setTimeout(function(){
+      var hint = document.createElement('div');
+      hint.style.cssText = 'position:absolute;bottom:10px;left:50%;transform:translateX(-50%);z-index:1000;background:rgba(10,9,6,0.85);color:rgba(232,224,204,0.75);font-size:10px;padding:6px 16px;letter-spacing:0.1em;pointer-events:none;white-space:nowrap;border:1px solid rgba(201,168,76,0.2);transition:opacity 1s;';
+      hint.textContent = 'Scroll = zoom  ·  Arrastra para mover';
+      mapDiv.style.position = 'relative';
+      mapDiv.appendChild(hint);
+      setTimeout(function(){ hint.style.opacity='0'; setTimeout(function(){ if(hint.parentNode) hint.parentNode.removeChild(hint); }, 1000); }, 3000);
+    }, 600);
+
+  } else {
+    czSatMap.setView([lat, lng], 15);
+  }
+
+  if(czSatMarker) czSatMap.removeLayer(czSatMarker);
+  czSatMarker = L.circleMarker([lat, lng], {
+    radius: 10, color: '#C9A84C', fillColor: '#C9A84C', fillOpacity: 0.5, weight: 2
+  }).addTo(czSatMap);
+
+  czSatMarker.bindPopup(
+    '<div style="font-family:Lato,sans-serif;padding:6px 4px;">'
+    + '<strong style="color:#C9A84C;font-size:12px;">' + name + '</strong><br>'
+    + '<span style="color:rgba(232,224,204,0.5);font-size:10px;">Lat: ' + lat.toFixed(4) + ' &nbsp;&middot;&nbsp; Lng: ' + lng.toFixed(4) + '</span>'
+    + '</div>',
+    { className: 'sat-popup', offset: [0, -5] }
+  ).openPopup();
+
+  czSatMap.invalidateSize();
 }
 
 // ════════════════════════════════════════
