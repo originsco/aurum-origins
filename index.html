@@ -2231,61 +2231,109 @@ function buildFinCharts(){
 // ════════════════════════════════════════
 //  SATELLITE MAP
 // ════════════════════════════════════════
-// ══ SATELLITE MAP — Google Maps Embed (iframe, 100% reliable) ══
-const PARCELAS = {
-  'PROV-001': {lat:-10.6626, lng:-75.3558, zoom:15},
-  'PROV-002': {lat:-11.4893, lng:-74.9011, zoom:15},
-  'PROV-003': {lat:-9.2853,  lng:-75.9964, zoom:15},
-  'PROV-004': {lat:-13.0544, lng:-72.5745, zoom:15}
-};
+// ══ SATELLITE MAP — Leaflet + ESRI Satellite (sin API key, 100% gratis) ══
+var satMap = null;
+var satMarker = null;
 
-function loadSatellite(lat,lng,name){
-  var mapDiv = document.getElementById('sat-map');
+function loadSatellite(lat, lng, name) {
   var nameEl = document.getElementById('sat-name');
   var linkEl = document.getElementById('sat-gmaps-link');
+  var mapDiv = document.getElementById('sat-map');
 
   if(nameEl) nameEl.textContent = name;
 
-  // Show loading
-  mapDiv.innerHTML = '<div style="height:100%;display:flex;align-items:center;justify-content:center;background:#131008;flex-direction:column;gap:12px;">'
-    + '<div style="font-size:32px;">🛰</div>'
-    + '<div style="font-size:11px;color:rgba(201,168,76,0.7);letter-spacing:0.15em;">Cargando vista satelital...</div>'
-    + '</div>';
-
-  // Build Google Maps Embed URL
-  var zoom = 16;
-  var embedUrl = 'https://www.google.com/maps/embed/v1/view'
-    + '?key=AIzaSyAEgkpN1aI0tna5cwQ6yGE9_k2HsMfHV2o'
-    + '&center=' + lat + ',' + lng
-    + '&zoom=' + zoom
-    + '&maptype=satellite';
-
-  // Create iframe
-  var iframe = document.createElement('iframe');
-  iframe.style.cssText = 'width:100%;height:500px;border:none;display:block;';
-  iframe.src = embedUrl;
-  iframe.allowFullscreen = true;
-  iframe.loading = 'lazy';
-  iframe.referrerPolicy = 'no-referrer-when-downgrade';
-
-  iframe.onload = function(){
-    mapDiv.innerHTML = '';
-    mapDiv.appendChild(iframe);
-  };
-
-  // Update "open in Google Maps" link
+  // Update Google Maps link (just for opening externally)
   if(linkEl){
-    linkEl.href = 'https://www.google.com/maps/@' + lat + ',' + lng + ',' + zoom + 'z/data=!3m1!1e3';
+    linkEl.href = 'https://www.google.com/maps/@' + lat + ',' + lng + ',500m/data=!3m1!1e3';
     linkEl.style.display = 'inline-block';
   }
 
-  // Fallback if iframe takes too long
-  setTimeout(function(){
-    if(mapDiv.innerHTML.includes('Cargando')){
-      mapDiv.innerHTML = '';
-      mapDiv.appendChild(iframe);
-    }
-  }, 1500);
+  if(!satMap) {
+    // First load — initialize Leaflet map
+    mapDiv.innerHTML = '';
+    mapDiv.style.background = '';
+
+    satMap = L.map('sat-map', {
+      center: [lat, lng],
+      zoom: 15,
+      scrollWheelZoom: true,
+      zoomControl: true,
+      maxZoom: 21
+    });
+
+    // Google Maps Satellite via TMS (no API key, works via direct tile URL)
+    L.tileLayer(
+      'https://mt{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
+      {
+        attribution: '&copy; Google Maps',
+        subdomains: ['0','1','2','3'],
+        maxZoom: 21,
+        maxNativeZoom: 21,
+        minZoom: 5,
+        tileSize: 256
+      }
+    ).addTo(satMap);
+
+    // Google Maps Hybrid labels overlay (roads + place names on satellite)
+    L.tileLayer(
+      'https://mt{s}.google.com/vt/lyrs=h&x={x}&y={y}&z={z}',
+      {
+        subdomains: ['0','1','2','3'],
+        maxZoom: 21,
+        maxNativeZoom: 21,
+        opacity: 0.8,
+        tileSize: 256
+      }
+    ).addTo(satMap);
+
+    // Style controls
+    var css = document.createElement('style');
+    css.textContent = [
+      '.leaflet-control-attribution { background:rgba(10,9,6,0.8)!important; color:rgba(255,255,255,0.35)!important; font-size:9px!important; }',
+      '.leaflet-control-zoom a { background:#1a1810!important; color:#C9A84C!important; border-color:rgba(201,168,76,0.3)!important; width:30px!important; height:30px!important; line-height:30px!important; font-size:15px!important; }',
+      '.leaflet-control-zoom a:hover { background:#252015!important; }',
+      '.leaflet-bar { border:1px solid rgba(201,168,76,0.25)!important; box-shadow:none!important; }',
+      '.sat-popup .leaflet-popup-content-wrapper { background:#1a1810; border:1px solid rgba(201,168,76,0.3); border-radius:2px; box-shadow:0 4px 20px rgba(0,0,0,0.5); }',
+      '.sat-popup .leaflet-popup-tip { background:#1a1810; }',
+    ].join('');
+    document.head.appendChild(css);
+
+    // Zoom hint
+    setTimeout(function(){
+      var hint = document.createElement('div');
+      hint.style.cssText = 'position:absolute;bottom:10px;left:50%;transform:translateX(-50%);z-index:1000;background:rgba(10,9,6,0.85);color:rgba(232,224,204,0.75);font-size:10px;padding:6px 16px;letter-spacing:0.1em;pointer-events:none;white-space:nowrap;border:1px solid rgba(201,168,76,0.2);transition:opacity 1s;';
+      hint.textContent = 'Scroll = zoom  ·  Arrastra para mover';
+      mapDiv.style.position = 'relative';
+      mapDiv.appendChild(hint);
+      setTimeout(function(){ hint.style.opacity='0'; setTimeout(function(){ if(hint.parentNode) hint.parentNode.removeChild(hint); }, 1000); }, 3000);
+    }, 600);
+
+  } else {
+    // Already initialized — just move to new location
+    satMap.setView([lat, lng], 15);
+  }
+
+  // Remove previous marker
+  if(satMarker) satMap.removeLayer(satMarker);
+
+  // Add golden marker
+  satMarker = L.circleMarker([lat, lng], {
+    radius: 10,
+    color: '#C9A84C',
+    fillColor: '#C9A84C',
+    fillOpacity: 0.5,
+    weight: 2
+  }).addTo(satMap);
+
+  satMarker.bindPopup(
+    '<div style="font-family:Lato,sans-serif;padding:6px 4px;">'
+    + '<strong style="color:#C9A84C;font-size:12px;">' + name + '</strong><br>'
+    + '<span style="color:rgba(232,224,204,0.5);font-size:10px;">Lat: ' + lat.toFixed(4) + ' &nbsp;&middot;&nbsp; Lng: ' + lng.toFixed(4) + '</span>'
+    + '</div>',
+    { className: 'sat-popup', offset: [0, -5] }
+  ).openPopup();
+
+  satMap.invalidateSize();
 }
 
 // ════════════════════════════════════════
