@@ -2,8 +2,8 @@
   "name": "Aurum Origins",
   "short_name": "Aurum",
   "description": "Café de especialidad, cacao premium y artesanías andinas del Perú.",
-  "start_url": "/aurum-origins/",
-  "scope": "/aurum-origins/",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
   "background_color": "#4A1825",
@@ -23,19 +23,22 @@
       "purpose": "any maskable"
     }
   ],
-  "categories": ["business", "productivity"],
+  "categories": [
+    "business",
+    "productivity"
+  ],
   "shortcuts": [
     {
       "name": "Panel Admin",
       "short_name": "Admin",
       "description": "Acceder al panel de administrador",
-      "url": "/aurum-origins/#admin"
+      "url": "/"
     },
     {
       "name": "Portal Proveedor",
       "short_name": "Proveedor",
       "description": "Acceder al portal de proveedores",
-      "url": "/aurum-origins/#proveedor"
+      "url": "/"
     }
   ]
 }
